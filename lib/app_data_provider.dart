@@ -11,22 +11,52 @@ import 'models/course.dart';
 class AppDataProvider extends ChangeNotifier {
   final dataSource = DataSource();
   List<Course> courseList = [];
+  DateTime? tokenExpiryTime;
+  bool _isLoggedIn = false;
+
+  bool get isLoggedIn => _isLoggedIn;
 
   Future<AuthResponseModel?> login(String name, String password) async {
     final user = AppUser(userName: name, password: password, role: 'ADMIN');
     final response = await dataSource.login(user);
-    if(response == null) return null;
+    if (response == null) return null;
     await setToken(response.accessToken);
+    tokenExpiryTime =
+        DateTime.now().add(Duration(minutes: response.expirationDuration));
+
+    _isLoggedIn = true;
+    notifyListeners();
     return response;
   }
 
-  Future<void> addCourse({required String name, required String details, required double fee}) async {
-    final course = Course(name: name, details: details, fee: fee);
-    await dataSource.addCourse(course);
+  void logout() {
+    clearToken();
+    _isLoggedIn = false;
+    notifyListeners();
   }
 
-  Future<void> getAllCourse() async {
-    courseList = await dataSource.getAllCourses();
+  Future<void> checkLoggedIn() async {
+    _isLoggedIn = !isTokenExpired();
     notifyListeners();
+  }
+
+  Future<void> addCourse({
+    required String name,
+    required String details,
+    required double fee,
+  }) async {
+    final course = Course(name: name, details: details, fee: fee);
+    await dataSource.addCourse(course);
+    await getAllCourses();
+    notifyListeners();
+  }
+
+  Future<List<Course>> getAllCourses() async {
+    courseList = await dataSource.getAllCourses();
+    return courseList;
+  }
+
+  bool isTokenExpired() {
+    return tokenExpiryTime != null && DateTime.now().isAfter(tokenExpiryTime!);
   }
 }

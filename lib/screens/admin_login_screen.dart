@@ -16,7 +16,7 @@ class AdminLoginScreen extends StatefulWidget {
 
 class _AdminLoginScreenState extends State<AdminLoginScreen> {
   final _formKey = GlobalKey<FormState>(); // GlobalKey for Form
-  bool _obscureText = true; // Flag for password visibility
+  bool _obscureText = true;
 
   String _username = "";
   String _password = "";

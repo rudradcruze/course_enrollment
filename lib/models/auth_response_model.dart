@@ -2,14 +2,14 @@ class AuthResponseModel {
   int statusCode;
   String message;
   String accessToken;
-  int loginTime;
+  int time;
   int expirationDuration;
 
   AuthResponseModel({
     required this.statusCode,
     required this.message,
     required this.accessToken,
-    required this.loginTime,
+    required this.time,
     required this.expirationDuration,
   });
 
@@ -18,7 +18,7 @@ class AuthResponseModel {
       'statusCode': statusCode,
       'message': message,
       'accessToken': accessToken,
-      'loginTime': loginTime,
+      'time': time,
       'expirationDuration': expirationDuration,
     };
   }
@@ -27,7 +27,7 @@ class AuthResponseModel {
     statusCode: json['statusCode'],
     message: json['message'],
     accessToken: json['accessToken'],
-    loginTime: json['loginTime'],
+    time: json['time'],
     expirationDuration: json['expirationDuration'],
   );
 }
